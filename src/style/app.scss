@@ -2,6 +2,7 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
+
 .survey-wrapper {
 
     display: flex;
@@ -9,6 +10,10 @@ body {
     align-items: center;
     flex-direction: column;
     height: 100vh;
+    // background-image: ;
+    background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+    
+
 
     .cards-section {
 
@@ -30,10 +35,11 @@ body {
         padding: 10px 20px;
 
         .question {
+            margin-top: 15px;
             .text 
             {
                 font-weight: bold;
-                padding: 10px 0px;
+                
             }
         }
 
@@ -45,6 +51,18 @@ body {
         .form-buttons {
             margin-top: 20px;
             text-align: end;
+        }
+    }
+    .nextBtn
+    {
+        background-color: rgb(0, 0, 0);
+        border: 1px solid rgb(255, 255, 255);
+        color: rgb(255, 255, 255);
+        &:hover
+        {
+            background-color: rgb(255, 255, 255);
+            border: 1px solid black;
+            color: black;
         }
     }
 
