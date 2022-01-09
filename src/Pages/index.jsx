@@ -1,80 +1,95 @@
 import React, { useState } from "react";
 
-import { Form, Radio, Input, Space,Tooltip, Button } from "antd";
+import { Form, Radio, Input, Space, Tooltip, Button } from "antd";
 import { Allquestions } from "../contstants/question";
 
 import { Menu, Dropdown } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined ,LineChartOutlined , BulbOutlined } from "@ant-design/icons";
+import SurveyResult from "./Result";
 
-import CountryDropdown from 'country-dropdown-with-flags-for-react';
 
-import { Us } from 'react-flags-select';
 
-import ReactFlagsSelect from 'react-flags-select';
+
 
 function SurveyForm() {
+  const [form] = Form.useForm();
   const [questions, setQuestions] = useState(Allquestions);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [radioOption, setRadioOption] = useState(1);
+  const [answers,setAnswer] = useState([])
+  const [error,setError] = useState(false)
 
   const [showData, setShowData] = useState(false);
 
-  const [selected, setSelected] = useState('');
+  const [inputAnswer, setInputAnswer] = useState("");
 
   const showQuestionData = () => {
-    setShowData(!showData);
+    setShowData(true);
   };
 
   const menu = (
     <Menu onClick={showQuestionData}>
-      <Menu.Item key="0">  <div>
-        <Us /> United States
-      </div></Menu.Item>
+      <Menu.Item key="0">Option 1</Menu.Item>
+      <Menu.Item key="1">Option 2</Menu.Item>
     </Menu>
   );
 
   const onFinish = (values) => {
     console.log("Success:", values);
   };
-  console.log(":::", currentQuestion, ":::", radioOption);
-
-  const onChange = (e) => {
-    console.log("radio checked", e.target.value);
-    setRadioOption({
-      value: e.target.value,
-    });
-  };
-
-  const nextQuestion = () => {
-    setCurrentQuestion(currentQuestion + 1);
-  };
-
-  const handleSelection = (e) =>
-  {
-    setShowData(!showData);
-    setSelected(e)
+  const onChangeValue = (value)=> {
+    console.log(value.target.value,'is the value')
+    setInputAnswer(value.target.value)
   }
+  const nextQuestion = () => {
+
+    if(inputAnswer)
+    {
+      const objofAnswers = {index:currentQuestion+1,currentQuestion:questions[currentQuestion]?.question,Answer:inputAnswer}
+      // console.log(inputAnswer)
+      setAnswer([...answers,objofAnswers])
+      setCurrentQuestion(currentQuestion + 1);
+      console.log(answers,':::: is the obj Answer')
+      setInputAnswer('')
+      setError(false)
+      form.resetFields();
+
+    }
+    else 
+    {
+      setError(true)
+    }
+    
+   
+  };
 
   return (
     <div className="survey-wrapper">
-      <div className="cards-section">
-        <h2 className="title">Prefrence Wizard</h2>
+      
+      <h1 className="wizard-title ">Prefrence Wizard </h1>
+      <div className={`cards-section ${currentQuestion==questions.length && `card-width` }`}>
+        <h2 className="title">Survey Form  </h2>
 
         <div className="card-form">
           {currentQuestion < questions.length ? (
-            <Form name="basic" onFinish={onFinish}  layout="vertical">
-              {/* <Dropdown overlay={menu} trigger={["click"]}>
-                <Button size="large">
-                  bottomLeft <DownOutlined />
+            <Form
+              name="basic"
+              onFinish={onFinish}
+              layout="vertical"
+              form={form}
+            >
+              <Dropdown overlay={menu}>
+                <Button style={{ width: "100%" }} size="large">
+                  <div className="dropdown-button">
+                    <div style={{ textAlign: "right" }}>
+                      Select the Options first
+                    </div>
+                    <div>
+                      <DownOutlined style={{ textAlign: "right" }} />
+                    </div>
+                  </div>
                 </Button>
-              </Dropdown> */}
-
-
-              <ReactFlagsSelect
-                countries={["US", "CA","MX"]}
-        selected={selected}
-        onSelect={handleSelection}
-      />
+              </Dropdown>
 
               {showData && (
                 <>
@@ -84,30 +99,37 @@ function SurveyForm() {
                     <h3 className="text">
                       {questions[currentQuestion]?.question}
                     </h3>
-                    <Form.Item label="Answer"  tooltip="Input A Number">
-                     
-                        <Input
-                          placeholder="Input a number"
-                          size="large"
-                          type='number'
-                        />
-                      
+                    <Form.Item
+                      label="Answer"
+                      name="inputField"
+                      tooltip="Input A Number"
+                      >
+                      <Input
+                        placeholder="99.99"
+                        type="number"
+                        size="large"
+                        onChange={onChangeValue}
+                      />
+                      {error &&
+                        <p className="error">* Input is Required</p>
+                      }
                     </Form.Item>
+                    <div className="form-buttons">
+                      <Button
+                        type="primary"
+                        className="nextBtn"
+                        size="large"
+                        onClick={nextQuestion}
+                      >
+                        Next
+                      </Button>
+                    </div>
                   </div>
                 </>
               )}
-              <div className="form-buttons">
-                <Button
-                  type="primary"
-                  className="nextBtn"
-                  onClick={nextQuestion}
-                >
-                  Next
-                </Button>
-              </div>
             </Form>
           ) : (
-            <h2 className="final-msg">Thank You....</h2>
+            <SurveyResult answers={answers} />
           )}
         </div>
       </div>

@@ -6,20 +6,24 @@ body {
 .survey-wrapper {
 
     display: flex;
-    justify-content: center;
+    // justify-content: center;
     align-items: center;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
+    padding: 30px 0px;
     // background-image: ;
-    background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
-    
-
+    // background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+   
+    .wizard-title 
+    {
+        font-size: 35px;
+        font-weight: 600;
+    }
 
     .cards-section {
 
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         width: 40%;
-        /* height: 50%; */
         background-color: white;
         border-radius: 8px;
 
@@ -32,20 +36,21 @@ body {
     }
 
     .card-form {
-        padding: 10px 20px;
+        padding: 30px 20px;
 
         .question {
             margin-top: 15px;
-            .text 
-            {
+
+            .text {
                 font-weight: bold;
-                
+
             }
         }
 
-        .radio-option 
-        {
+        .error {
             margin-top: 10px;
+            margin-bottom: 0px;
+            color: red;
         }
 
         .form-buttons {
@@ -53,34 +58,55 @@ body {
             text-align: end;
         }
     }
-    .nextBtn
-    {
+
+    .nextBtn {
         background-color: rgb(0, 0, 0);
         border: 1px solid rgb(255, 255, 255);
         color: rgb(255, 255, 255);
-        &:hover
-        {
-            background-color: rgb(255, 255, 255);
+
+        &:hover {
+            // background-color: rgb(255, 255, 255);
             border: 1px solid black;
-            color: black;
+            // color: black;
         }
     }
 
+    .card-width {
+        width: 75%  !important;
+    }
     .final-msg {
         font-size: 52px;
         text-align: center;
     }
 
+    .dropdown-button {
+        display: flex;
+        justify-content: space-between;
+    }
+
 }
 
-@media only screen and (max-width:992px )
-{
-    .survey-wrapper  {
-        .cards-section
-        {
-            
+@media only screen and (max-width:992px) {
+    .survey-wrapper {
+        .cards-section {
 
-            width: 90%;
+
+            width: 90% !important;
         }
     }
+
+    .card-width {
+        width: 90% !important;
+    }
+}
+
+
+
+
+.ant-table-thead>tr>th {
+    font-weight: bold;
+}
+
+.table-answer-style {
+    color: rgb(71, 188, 58);
 }
