@@ -1,35 +1,15 @@
-import React from 'react'
-import { Table } from 'antd';
+import React from "react";
+import { CheckCircleOutlined } from "@ant-design/icons";
 
-function SurveyResult({answers}) {
-    const columns = [
-        
-        {
-          title: '#',
-          dataIndex: 'index',
-            key: 'index'
-
-        },
-        {
-          title: 'Question',
-          dataIndex: 'currentQuestion',
-        
-        },
-        {
-            title: 'Answers',
-            
-            dataIndex:'Answer',
-            render: text => <a className='table-answer-style' >{text}</a>,
-          },
-       
-      ];
-      const data = answers;
-    return (
-        <div>
-            {/* hello world */}
-             <Table columns={columns} dataSource={data} pagination={false}  />
-        </div>
-    )
+function SurveyResult({ answers }) {
+  return (
+    <div className="survey-result">
+      <div className="cards-section text-center">
+        <h2 className="result-title">Survey Result</h2>
+        <CheckCircleOutlined className="svg-img" />
+      </div>
+    </div>
+  );
 }
 
-export default SurveyResult
+export default SurveyResult;

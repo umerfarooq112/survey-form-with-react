@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-import { Form, Radio, Input, Space, Tooltip, Button } from "antd";
-import { Allquestions } from "../contstants/question";
+import { Form, InputNumber, Button } from "antd";
+import { AllquestionsDataOne } from "../contstants/question";
 
 import { Menu, Dropdown } from "antd";
 import {
@@ -10,13 +10,13 @@ import {
   BulbOutlined,
 } from "@ant-design/icons";
 import SurveyResult from "./Result";
+import SurveyForm2 from "./Form";
 
 function SurveyForm() {
   const [form] = Form.useForm();
-  const [questions, setQuestions] = useState(Allquestions);
+  const [questions, setQuestions] = useState(AllquestionsDataOne);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [radioOption, setRadioOption] = useState(1);
-  const [answers, setAnswer] = useState([]);
+
   const [error, setError] = useState(false);
 
   const [showData, setShowData] = useState(false);
@@ -38,52 +38,52 @@ function SurveyForm() {
     console.log("Success:", values);
   };
   const onChangeValue = (value) => {
-    console.log(value.target.value, "is the value");
-    setInputAnswer(value.target.value);
+    console.log(value, "is the value");
+    setInputAnswer(value);
   };
   const nextQuestion = () => {
-    if (inputAnswer) {
-      const objofAnswers = {
-        index: currentQuestion + 1,
-        currentQuestion: questions[currentQuestion]?.question,
-        Answer: inputAnswer,
-      };
-      // console.log(inputAnswer)
-      setAnswer([...answers, objofAnswers]);
-      setCurrentQuestion(currentQuestion + 1);
-      console.log(answers, ":::: is the obj Answer");
-      setInputAnswer("");
-      setError(false);
-      form.resetFields();
+    if (questions[currentQuestion].mandatory == true) {
+      if (inputAnswer) {
+        setCurrentQuestion(currentQuestion + 1);
+        setInputAnswer("");
+        setError(false);
+        form.resetFields();
+      } else {
+        setError(true);
+      }
     } else {
-      setError(true);
+      setCurrentQuestion(currentQuestion + 1);
+      form.resetFields();
+
+      // setError(true);
     }
   };
 
-  return (
-    <div className="survey-wrapper">
-      
-        <h1 className="wizard-title color-white ">Prefrence Wizard </h1>
-        <div
-          className={`cards-section ${
-            currentQuestion == questions.length && `card-width`
-          }`}
-        >
-          <h2 className="title">Survey Form </h2>
+  const prevQuestion = () => {
+    setCurrentQuestion(currentQuestion - 1);
+    form.resetFields();
+  };
 
-          <div className="card-form">
-            {currentQuestion < questions.length ? (
-              <Form
-                name="basic"
-                onFinish={onFinish}
-                layout="vertical"
-                form={form}
-              >
+  return (
+    <>
+      {currentQuestion < questions.length ? (
+        <div className="survey-wrapper">
+          <h1 className="wizard-title  ">Preference Wizard </h1>
+          <div
+            className={`cards-section ${
+              currentQuestion == questions.length && `card-width`
+            }`}
+          >
+            <h2 className="title">Survey Form 1 </h2>
+
+            <div className="card-form">
+              <Form onFinish={onFinish} layout="vertical" form={form}>
+                <h2 className="label">Question: {currentQuestion + 1}</h2>
                 <Dropdown overlay={menu}>
                   <Button style={{ width: "100%" }} size="large">
                     <div className="dropdown-button">
                       <div style={{ textAlign: "right" }}>
-                        Select the Options first
+                        {questions[currentQuestion]?.question}
                       </div>
                       <div>
                         <DownOutlined style={{ textAlign: "right" }} />
@@ -95,25 +95,35 @@ function SurveyForm() {
                 {showData && (
                   <>
                     <div className="question">
-                      <h2 className="label">Question: {currentQuestion + 1}</h2>
-
-                      <h3 className="text">
-                        {questions[currentQuestion]?.question}
-                      </h3>
-                      <Form.Item
-                        label="Answer"
-                        name="inputField"
-                        tooltip="Input A Number"
-                      >
-                        <Input
+                      <p className="answer">
+                        Answer
+                        {questions[currentQuestion]?.mandatory ? (
+                          <span className="mandatory"> (Mandatory)</span>
+                        ) : (
+                          <span className="optional"> (Optional)</span>
+                        )}
+                      </p>
+                      <Form.Item tooltip="Input Number Here." name="input">
+                        <InputNumber
                           placeholder="99.99"
-                          type="number"
                           size="large"
+                          type="number"
+                          style={{ width: "100%" }}
                           onChange={onChangeValue}
                         />
                         {error && <p className="error">* Input is Required</p>}
                       </Form.Item>
                       <div className="form-buttons">
+                        {currentQuestion > 0 && (
+                          <Button
+                            type="primary"
+                            className="prevBtn"
+                            size="large"
+                            onClick={prevQuestion}
+                          >
+                            Previous
+                          </Button>
+                        )}
                         <Button
                           type="primary"
                           className="nextBtn"
@@ -127,13 +137,13 @@ function SurveyForm() {
                   </>
                 )}
               </Form>
-            ) : (
-              <SurveyResult answers={answers} />
-            )}
+            </div>
           </div>
         </div>
-      
-    </div>
+      ) : (
+        <SurveyForm2 />
+      )}
+    </>
   );
 }
 

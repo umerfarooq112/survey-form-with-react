@@ -1,37 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-import { Form, Button, Menu, Dropdown, Input, InputNumber } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { Form, Radio, Input, InputNumber, Space, Tooltip, Button } from "antd";
+import { AllquestionsDataTwo } from "../contstants/question";
 
-function SurveyFormAnt() {
+import { Menu, Dropdown } from "antd";
+import {
+  DownOutlined,
+  LineChartOutlined,
+  BulbOutlined,
+} from "@ant-design/icons";
+import SurveyResult from "./Result";
+
+function SurveyForm2() {
   const [form] = Form.useForm();
-
-  const onFinish = (values) => {
-    console.log("Success:", values);
-    form.resetFields();
-  };
-
-  const [showquestion, setShowQuestion] = useState(false);
+  const [questions, setQuestions] = useState(AllquestionsDataTwo);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [questions, setTotalQuestions] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
-  const [answers, setAnswers] = useState([]);
+  const [error, setError] = useState(false);
 
-  const showQuestionData = (e) => {
-    // setShowData(!showData);
-    // console.log(e,'is the field')
-    setShowQuestion(true);
+  const [showData, setShowData] = useState(false);
+
+  const [inputAnswer, setInputAnswer] = useState("");
+
+  const showQuestionData = () => {
+    setShowData(true);
   };
 
-  const onChange = (value) => {
-    console.log(value, "input number value");
-  };
-  const nextQuestion = () => {
-    // setAnswers([...answers]);
-    setCurrentQuestion(currentQuestion + 1);
-    // form.clear()
-    form.resetFields();
-  };
+  React.useEffect(() => {
+    setCurrentQuestion(0);
+  }, []);
 
   const menu = (
     <Menu onClick={showQuestionData}>
@@ -39,61 +36,118 @@ function SurveyFormAnt() {
       <Menu.Item key="1">Option 2</Menu.Item>
     </Menu>
   );
+
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
+  const onChangeValue = (value) => {
+    console.log(value, "is the value");
+    setInputAnswer(value);
+  };
+  const nextQuestion = () => {
+    if (questions[currentQuestion].mandatory == true) {
+      if (inputAnswer) {
+        setCurrentQuestion(currentQuestion + 1);
+        setInputAnswer("");
+        setError(false);
+        form.resetFields();
+      } else {
+        setError(true);
+      }
+    } else {
+      setCurrentQuestion(currentQuestion + 1);
+      form.resetFields();
+
+      // setError(true);
+    }
+  };
+
+  const prevQuestion = () => {
+    setCurrentQuestion(currentQuestion - 1);
+    form.resetFields();
+  };
+
   return (
-    <div className="survey-wrapper">
-      <div className="cards-section">
-        <h2 className="title">Prefrence Wizard</h2>
+    <>
+      {currentQuestion < questions.length ? (
+        <div className="survey-wrapper">
+          <h1 className="wizard-title  ">Preference Wizard </h1>
+          <div
+            className={`cards-section ${
+              currentQuestion == questions.length && `card-width`
+            }`}
+          >
+            <h2 className="title">Survey Form 2 </h2>
 
-        <div className="card-form">
-          <Form name="basic" onFinish={onFinish} layout="vertical" form={form}>
-            <Dropdown overlay={menu}>
-              <Button style={{ width: "100%" }} size="large">
-                <div className="dropdown-button">
-                  <div style={{ textAlign: "right" }}>
-                    Select the Options first
-                  </div>
-                  <div>
-                    <DownOutlined style={{ textAlign: "right" }} />
-                  </div>
-                </div>
-              </Button>
-            </Dropdown>
-
-            {showquestion && (
-              <div className="question">
-                <h2 className="label">Question: </h2>
-
-                <h3 className="text">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Perferendis, ipsam.
-                </h3>
-                <Form.Item label="Answer" name='inputfield' tooltip="Input A Decimal Number">
-                  <InputNumber
-                    placeholder="99.99"
-                    size="large"
-                    type="number"
-                    
-                    onChange={onChange}
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-                <div className="form-buttons">
-                  <Button
-                    type="primary"
-                    className="nextBtn"
-                    onClick={nextQuestion}
-                    // htmlType="submit"
-                  >
-                    Next
+            <div className="card-form">
+              <Form onFinish={onFinish} layout="vertical" form={form}>
+                <h2 className="label">Question: {currentQuestion + 6}</h2>
+                <Dropdown overlay={menu}>
+                  <Button style={{ width: "100%" }} size="large">
+                    <div className="dropdown-button">
+                      <div style={{ textAlign: "right" }}>
+                        {questions[currentQuestion]?.question}
+                      </div>
+                      <div>
+                        <DownOutlined style={{ textAlign: "right" }} />
+                      </div>
+                    </div>
                   </Button>
-                </div>
-              </div>
-            )}
-          </Form>
+                </Dropdown>
+
+                {showData && (
+                  <>
+                    <div className="question">
+                      <p className="answer">
+                        Answer
+                        {questions[currentQuestion]?.mandatory ? (
+                          <span className="mandatory"> (Mandatory)</span>
+                        ) : (
+                          <span className="optional"> (Optional)</span>
+                        )}
+                      </p>
+                      <Form.Item tooltip="Input Number Here." name="input">
+                        <InputNumber
+                          placeholder="99.99"
+                          size="large"
+                          type="number"
+                          style={{ width: "100%" }}
+                          onChange={onChangeValue}
+                        />
+                        {error && <p className="error">* Input is Required</p>}
+                      </Form.Item>
+                      <div className="form-buttons">
+                        {currentQuestion > 0 && (
+                          <Button
+                            type="primary"
+                            className="prevBtn"
+                            size="large"
+                            onClick={prevQuestion}
+                          >
+                            Previous
+                          </Button>
+                        )}
+                        <Button
+                          type="primary"
+                          className="nextBtn"
+                          size="large"
+                          onClick={nextQuestion}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </Form>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      ) : (
+        <SurveyResult />
+      )}
+    </>
   );
 }
 
-export default SurveyFormAnt;
+export default SurveyForm2;
